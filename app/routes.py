@@ -93,6 +93,9 @@ def inscription(data: InscriptionSchema, db: Session = Depends(get_db)):
             "nom": user.nom,
             "email": user.email,
             "role": user.role,
+            "localisation": user.localisation,
+            "telephone": user.telephone,
+            "note_globale": user.note_globale,
         }
     }
 
