@@ -75,3 +75,11 @@ class Message(Base):
     date_envoi = Column(DateTime, server_default=func.now())
     expediteur_id = Column(Integer, ForeignKey("utilisateurs.id"))
     destinataire_id = Column(Integer, ForeignKey("utilisateurs.id"))
+
+class ConversationBot(Base):
+    __tablename__ = "conversation_bot"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("utilisateurs.id"), nullable=False)
+    role = Column(String(20), nullable=False)  # "user" ou "assistant"
+    contenu = Column(Text, nullable=False)
+    date_envoi = Column(DateTime, server_default=func.now())
