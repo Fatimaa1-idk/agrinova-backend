@@ -5,11 +5,11 @@ from groq import Groq
 from sqlalchemy.orm import Session, joinedload
 from app.models import Utilisateur, Produit, Commande, Avis, ConversationBot
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 GROQ_MODEL = "llama-3.3-70b-versatile"
 MAX_HISTORY = 20
 
-client = Groq(api_key=GROQ_API_KEY)
+# Groq auto-reads GROQ_API_KEY from the environment if api_key is not given
+client = Groq()
 
 # ── Tool definitions ──────────────────────────────────────────────────────────
 TOOLS = [
