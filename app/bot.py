@@ -1,16 +1,15 @@
 import os
 import json
 from datetime import datetime
-from openai import OpenAI
+from groq import Groq
 from sqlalchemy.orm import Session, joinedload
 from app.models import Utilisateur, Produit, Commande, Avis, ConversationBot
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 GROQ_MODEL = "llama-3.3-70b-versatile"
 MAX_HISTORY = 20
 
-client = OpenAI(api_key=GROQ_API_KEY, base_url=GROQ_BASE_URL)
+client = Groq(api_key=GROQ_API_KEY)
 
 # ── Tool definitions ──────────────────────────────────────────────────────────
 TOOLS = [
