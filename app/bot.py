@@ -7,7 +7,7 @@ from app.models import Utilisateur, Produit, Commande, Avis, ConversationBot
 
 GROQ_MODEL = "llama-3.3-70b-versatile"
 MAX_HISTORY = 20
-
+ 
 # Groq auto-reads GROQ_API_KEY from the environment if api_key is not given
 client = Groq()
 
