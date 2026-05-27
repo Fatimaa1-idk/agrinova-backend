@@ -504,12 +504,14 @@ def bot_chat(
     db: Session = Depends(get_db),
     user: Utilisateur = Depends(get_utilisateur_actuel)
 ):
-    from app.bot import chat_avec_groq as chat_avec_gemini
     if not data.message.strip():
         raise HTTPException(status_code=400, detail="Message vide")
     try:
-        reponse = chat_avec_gemini(data.message.strip(), user, db)
+        from app.bot import chat_avec_groq
+        reponse = chat_avec_groq(data.message.strip(), user, db)
         return {"reponse": reponse, "user": user.nom}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur AgrinovaBot: {str(e)}")
 
