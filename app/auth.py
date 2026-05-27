@@ -19,7 +19,7 @@ EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", "1440"))
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/connexion")
 
 def hasher_mdp(mdp: str) -> str:
-    """Hash le mot de passe avec SHA256"""
+    """Hash Le mot de passe avec SHA256"""
     return hashlib.sha256(mdp.encode()).hexdigest()
 
 def verifier_mdp(mdp: str, hash: str) -> bool:
