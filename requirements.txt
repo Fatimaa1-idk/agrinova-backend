@@ -9,7 +9,7 @@ fastapi==0.135.3
 greenlet==3.4.0
 h11==0.16.0
 idna==3.11
-openai==1.82.0
+openai==1.82.0 
 passlib==1.7.4 
 psycopg2-binary==2.9.11
 pyasn1==0.6.3
