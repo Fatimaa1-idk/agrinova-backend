@@ -2,32 +2,32 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
 from app.routes import router
+import os
 
-# Créer toutes les tables automatiquement
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Agrinova API",
-    description="API du marketplace agricole Agrinova 🌾",
-    version="1.0.0"
+    description="API du marketplace agricole Agrinova",
+    version="2.0.0",
+    docs_url="/docs" if os.getenv("ENV") != "production" else None,
+    redoc_url=None,
 )
 
-# CORS — permet au frontend React d'appeler l'API
+# CORS — en prod, mettre l'URL exacte du frontend dans FRONTEND_URL
+FRONTEND_URL = os.getenv("FRONTEND_URL", "*")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[FRONTEND_URL] if FRONTEND_URL != "*" else ["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Enregistrer toutes les routes avec le préfixe /api
 app.include_router(router, prefix="/api")
 
+
 @app.get("/")
-def accueil():
-    return {
-        "message": "Bienvenue sur l'API Agrinova ! 🌾",
-        "version": "1.0.0",
-        "docs": "/docs"
-    }
+def health():
+    return {"status": "ok", "version": "2.0.0"}

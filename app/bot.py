@@ -357,7 +357,11 @@ def chat_avec_groq(message: str, user: Utilisateur, db: Session) -> str:
         contenu_reponse = reponse2.choices[0].message.content
 
     else:
-        contenu_reponse = msg.content
+        contenu_reponse = msg.content or ""
+
+    # Fallback si le modèle ne renvoie rien
+    if not contenu_reponse.strip():
+        contenu_reponse = "Je suis désolé, je n'ai pas pu générer une réponse. Veuillez reformuler votre question."
 
     # ── Sauvegarder en base ────────────────────────────────────────────────
     db.add(ConversationBot(user_id=user.id, role="user", contenu=message))

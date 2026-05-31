@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
 
+
 class Utilisateur(Base):
     __tablename__ = "utilisateurs"
     id = Column(Integer, primary_key=True, index=True)
@@ -21,6 +22,8 @@ class Utilisateur(Base):
     produits = relationship("Produit", back_populates="agriculteur")
     commandes_acheteur = relationship("Commande", foreign_keys="Commande.acheteur_id", back_populates="acheteur")
     commandes_vendeur = relationship("Commande", foreign_keys="Commande.agriculteur_id", back_populates="agriculteur")
+    posts = relationship("Post", back_populates="auteur", cascade="all, delete-orphan")
+
 
 class Produit(Base):
     __tablename__ = "produits"
@@ -39,6 +42,7 @@ class Produit(Base):
     agriculteur = relationship("Utilisateur", back_populates="produits")
     commandes = relationship("Commande", back_populates="produit")
 
+
 class Commande(Base):
     __tablename__ = "commandes"
     id = Column(Integer, primary_key=True, index=True)
@@ -56,6 +60,7 @@ class Commande(Base):
     produit = relationship("Produit", back_populates="commandes")
     avis = relationship("Avis", back_populates="commande", uselist=False)
 
+
 class Avis(Base):
     __tablename__ = "avis"
     id = Column(Integer, primary_key=True, index=True)
@@ -67,6 +72,7 @@ class Avis(Base):
     agriculteur_id = Column(Integer, ForeignKey("utilisateurs.id"))
     commande = relationship("Commande", back_populates="avis")
 
+
 class Message(Base):
     __tablename__ = "messages"
     id = Column(Integer, primary_key=True, index=True)
@@ -76,10 +82,42 @@ class Message(Base):
     expediteur_id = Column(Integer, ForeignKey("utilisateurs.id"))
     destinataire_id = Column(Integer, ForeignKey("utilisateurs.id"))
 
+
 class ConversationBot(Base):
     __tablename__ = "conversation_bot"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("utilisateurs.id"), nullable=False)
-    role = Column(String(20), nullable=False)  # "user" ou "assistant"
+    role = Column(String(20), nullable=False)
     contenu = Column(Text, nullable=False)
     date_envoi = Column(DateTime, server_default=func.now())
+
+
+class Post(Base):
+    """Publication dans le fil d'actualité des agriculteurs."""
+    __tablename__ = "posts"
+    id = Column(Integer, primary_key=True, index=True)
+    contenu = Column(Text, nullable=False)
+    photo = Column(String(500))
+    date_publication = Column(DateTime, server_default=func.now())
+    auteur_id = Column(Integer, ForeignKey("utilisateurs.id"), nullable=False)
+    auteur = relationship("Utilisateur", back_populates="posts")
+    likes = relationship("PostLike", back_populates="post", cascade="all, delete-orphan")
+    commentaires = relationship("PostCommentaire", back_populates="post", cascade="all, delete-orphan")
+
+
+class PostLike(Base):
+    __tablename__ = "post_likes"
+    id = Column(Integer, primary_key=True, index=True)
+    post_id = Column(Integer, ForeignKey("posts.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("utilisateurs.id"), nullable=False)
+    post = relationship("Post", back_populates="likes")
+
+
+class PostCommentaire(Base):
+    __tablename__ = "post_commentaires"
+    id = Column(Integer, primary_key=True, index=True)
+    contenu = Column(Text, nullable=False)
+    date_commentaire = Column(DateTime, server_default=func.now())
+    post_id = Column(Integer, ForeignKey("posts.id"), nullable=False)
+    auteur_id = Column(Integer, ForeignKey("utilisateurs.id"), nullable=False)
+    post = relationship("Post", back_populates="commentaires")
